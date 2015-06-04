@@ -74,7 +74,7 @@ class Sitemap extends Component
         $lastmod = $objDateTime->format(\DateTime::W3C);
 
         $baseUrl = 'http://localhost/';
-        if (null !==\Yii::$app->urlManager->baseUrl) {
+        if (null !== \Yii::$app->urlManager->baseUrl) {
             $baseUrl = \Yii::$app->urlManager->baseUrl;
         }
         for ($i = 1; $i <= $this->filesCount; $i++) {
