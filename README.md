@@ -1,2 +1,2 @@
 # yii2-sitemap
-Yii2 sitemap console generator
+A Yii2 tool to generate sitemap.xml
