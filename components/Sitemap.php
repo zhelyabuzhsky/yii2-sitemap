@@ -1,7 +1,7 @@
 <?php
-namespace consolemarket\modules\sitemap\components;
+namespace zhelyabuzhsky\sitemap\components;
 
-use consolemarket\modules\sitemap\models\SitemapEntity;
+use zhelyabuzhsky\sitemap\models\SitemapEntity;
 use yii\base\Component;
 use yii\base\Exception;
 

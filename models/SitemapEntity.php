@@ -1,5 +1,5 @@
 <?php
-namespace consolemarket\modules\sitemap\models;
+namespace zhelyabuzhsky\sitemap\models;
 
 /**
  * Интерфейс для всех сущностей, которые могут записываться в sitemap.
