@@ -1,0 +1,27 @@
+{
+  "name": "zhelyabuzhsky/yii2-sitemap",
+  "description": "A Yii2 tool to generate sitemap.xml.",
+  "keywords": [
+    "yii2",
+    "sitemap"
+  ],
+  "homepage": "https://github.com/zhelyabuzhsky/yii2-sitemap",
+  "type": "yii2-extension",
+  "minimum-stability": "dev",
+  "license": "GNU GPL v2.0",
+  "authors": [
+    {
+      "name": "Ilya Zhelyabuzhsky",
+      "email": "zhelyabuzhsky@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "zhelyabuzhsky\\sitemap\\": ""
+    }
+  }
+}
