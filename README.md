@@ -1,9 +1,7 @@
 # yii2-sitemap
 
 [![Build Status](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap.svg)](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap)
-[![Latest Stable Version](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/v/stable)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
 [![Total Downloads](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/downloads)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
-[![License](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/license)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
 
 ## About
 
