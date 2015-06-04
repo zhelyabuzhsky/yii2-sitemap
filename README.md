@@ -1,4 +1,9 @@
 # yii2-sitemap
+
+[![Build Status](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap.svg)](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap)
+
+## About
+
 A Yii2 tool to generate sitemap.xml
 
 ## Installation
