@@ -57,7 +57,7 @@ class Sitemap extends Component
         foreach (glob("{$this->sitemapDirectory}/sitemap*.xml*") as $filePath) {
             unlink($filePath);
         }
-        // переименовыве новые файлы без '_'
+        // переименовываем новые файлы (без '_')
         foreach (glob("{$this->sitemapDirectory}/_sitemap*.xml*") as $filePath) {
             $newFilePath = dirname($filePath) . '/' . str_replace('_', '', basename($filePath));
             rename($filePath, $newFilePath);
