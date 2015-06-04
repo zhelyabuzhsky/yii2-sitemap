@@ -32,7 +32,11 @@ class Sitemap extends Component
         fwrite($this->handle, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
-        $baseUrl = \Yii::$app->urlManager->baseUrl;
+        if (isset(\Yii::$app->urlManager->baseUrl)) {
+            $baseUrl = \Yii::$app->urlManager->baseUrl;
+        } else {
+            $baseUrl = 'http://localhost/';
+        }
         for ($i = 1; $i <= $this->filesCount; $i++) {
             fwrite($this->handle, '<sitemap>');
             fwrite($this->handle, "<loc>{$baseUrl}/sitemap{$i}.xml.gz</loc>");
@@ -135,7 +139,7 @@ class Sitemap extends Component
             }
         }
 
-        if ($this->urlCount > 0) {
+        if ($this->urlCount >= 0) {
             $this->closeFile();
             $this->gzipFile();
         }
