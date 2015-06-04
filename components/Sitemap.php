@@ -6,20 +6,57 @@ use yii\base\Component;
 use yii\base\Exception;
 
 /**
- * Class Sitemap.
+ * Генератор sitemap
  */
 class Sitemap extends Component
 {
-    public $maxUrlsCountInFile; // максимальное число url в одном файле sitemap
-    public $sitemapDirectory; // директория, в которой будут храниться файлы sitemap
+    /**
+     * Максимальное число url в одном файле sitemap
+     * @var int
+     */
+    public $maxUrlsCountInFile;
 
-    protected $directory; // директория, в которой будут храниться файлы sitemap
-    protected $path; // путь до текущего файла sitemap, который генерируется прямо сейчас
-    protected $handle; // ресурс текущего файла sitemap, который генерируется прямо сейчас
-    protected $urlCount = 0; // количество url в файле sitemap, который генерируется прямо сейчас
-    protected $filesCount = 0; // порядковый номер генерируемого файла sitemap
-    protected $dataSources = Array(); // список источников данных для генерации sitemap
+    /**
+     * Директория, в которой будут храниться файлы sitemap
+     * @var string
+     */
+    public $sitemapDirectory;
 
+    /**
+     * Директория, в которой будут храниться файлы sitemap
+     * @var int
+     */
+    protected $directory;
+
+    /**
+     * Путь до текущего файла sitemap, который генерируется прямо сейчас
+     * @var string
+     */
+    protected $path;
+
+    /**
+     * Ресурс текущего файла sitemap, который генерируется прямо сейчас
+     * @var resource
+     */
+    protected $handle;
+
+    /**
+     * Количество url в файле sitemap, который генерируется прямо сейчас
+     * @var int
+     */
+    protected $urlCount = 0;
+
+    /**
+     * Порядковый номер генерируемого файла sitemap
+     * @var int
+     */
+    protected $filesCount = 0;
+
+    /**
+     * Массив источников данных для генерации sitemap
+     * @var \yii\db\ActiveQuery[]
+     */
+    protected $dataSources = [];
 
     /**
      * Создаёт индексный sitemap.xml.
@@ -28,20 +65,26 @@ class Sitemap extends Component
     {
         $this->path = "{$this->sitemapDirectory}/_sitemap.xml";
         $this->handle = fopen($this->path, 'w');
-        fwrite($this->handle, '<?xml version="1.0" encoding="UTF-8"?>');
-        fwrite($this->handle, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+        fwrite(
+            $this->handle,
+            '<?xml version="1.0" encoding="UTF-8"?>' .
+            '   <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        );
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
-        if (isset(\Yii::$app->urlManager->baseUrl)) {
+
+        $baseUrl = 'http://localhost/';
+        if (null !==\Yii::$app->urlManager->baseUrl) {
             $baseUrl = \Yii::$app->urlManager->baseUrl;
-        } else {
-            $baseUrl = 'http://localhost/';
         }
         for ($i = 1; $i <= $this->filesCount; $i++) {
-            fwrite($this->handle, '<sitemap>');
-            fwrite($this->handle, "<loc>{$baseUrl}/sitemap{$i}.xml.gz</loc>");
-            fwrite($this->handle, "<lastmod>{$lastmod}</lastmod>");
-            fwrite($this->handle, '</sitemap>');
+            fwrite(
+                $this->handle,
+                '<sitemap>' .
+                "   <loc>{$baseUrl}/sitemap{$i}.xml.gz</loc>" .
+                "   <lastmod>{$lastmod}</lastmod>" .
+                '</sitemap>'
+            );
         }
         fwrite($this->handle, '</sitemapindex>');
         fclose($this->handle);
@@ -72,9 +115,13 @@ class Sitemap extends Component
         $this->filesCount++;
         $this->path = "{$this->sitemapDirectory}/_sitemap{$this->filesCount}.xml";
         $this->handle = fopen($this->path, 'w');
-        fwrite($this->handle, '<?xml version="1.0" encoding="UTF-8"?>');
-        fwrite($this->handle,
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">');
+        fwrite(
+            $this->handle,
+            '<?xml version="1.0" encoding="UTF-8"?>' .
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
+            ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"' .
+            ' xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">'
+        );
     }
 
     /**
@@ -127,15 +174,17 @@ class Sitemap extends Component
 
         foreach ($this->dataSources as $dataSource) {
             /** @var \yii\db\ActiveQuery $dataSource */
-            foreach ($dataSource->each() as $entity) {
-                if ($this->urlCount == $this->maxUrlsCountInFile) {
-                    $this->urlCount = 0;
-                    $this->closeFile();
-                    $this->gzipFile();
-                    $this->beginFile();
+            foreach ($dataSource->batch(100) as $entities) {
+                foreach ($entities as $entity) {
+                    if ($this->urlCount === $this->maxUrlsCountInFile) {
+                        $this->urlCount = 0;
+                        $this->closeFile();
+                        $this->gzipFile();
+                        $this->beginFile();
+                    }
+                    $this->writeEntity($entity);
+                    $this->urlCount++;
                 }
-                $this->writeEntity($entity);
-                $this->urlCount++;
             }
         }
 
@@ -154,11 +203,14 @@ class Sitemap extends Component
      */
     protected function writeEntity($entity)
     {
-        fwrite($this->handle, '<url>');
-        fwrite($this->handle, '<loc>' . $entity->getSitemapLoc() . '</loc>');
-        fwrite($this->handle, '<lastmod>' . $entity->getSitemapLastmod() . '</lastmod>');
-        fwrite($this->handle, '<changefreq>' . $entity->getSitemapChangefreq() . '</changefreq>');
-        fwrite($this->handle, '<priority>' . $entity->getSitemapPriority() . '</priority>');
-        fwrite($this->handle, '</url>');
+        fwrite(
+            $this->handle,
+            '<url>' .
+            '   <loc>' . $entity->getSitemapLoc() . '</loc>' .
+            '   <lastmod>' . $entity->getSitemapLastmod() . '</lastmod>' .
+            '   <changefreq>' . $entity->getSitemapChangefreq() . '</changefreq>' .
+            '   <priority>' . $entity->getSitemapPriority() . '</priority>' .
+            '</url>'
+        );
     }
 }
