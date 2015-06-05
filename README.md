@@ -1,28 +1,25 @@
 # yii2-sitemap
 
 [![Build Status](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap.svg)](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap)
-[![Latest Stable Version](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/v/stable)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
 [![Total Downloads](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/downloads)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
-[![License](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/license)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
 
-## About
+A Yii2 extension to generate sitemap files for large web-sites in console
 
-A Yii2 tool to generate sitemap.xml
+## Install
 
-## Installation
+Via Composer
 
-Add
-
-```
-"zhelyabuzhsky/yii2-sitemap": "*"
+``` bash
+$ composer require zhelyabuzhsky/yii2-sitemap
 ```
 
-to the require section of your `composer.json` file.
+## Features
 
+* multiple sitemaps (large sites)
+* index sitemap
+* gzip
 
 ## Usage
-
-Add
 
 ```php
 'sitemap' =>
@@ -33,10 +30,6 @@ Add
   ],
 ```
 
-to the components section of your console config file.
-
-Add
-
 ```php
 public function actionCreateSitemap()
 {
@@ -46,4 +39,22 @@ public function actionCreateSitemap()
     ->create();
 }
 ```
-to you console controller.
+
+## Testing
+
+``` bash
+$ codecept run
+```
+
+## Security
+
+If you discover any security related issues, please email zhelyabuzhsky@gmail.com instead of using the issue tracker.
+
+## Credits
+
+- [Ilya Zhelyabuzhsky](https://github.com/zhelyabuzhsky)
+- [All Contributors](../../contributors)
+
+## License
+
+GNU General Public License, version 2. Please see [License File](LICENSE.md) for more information.

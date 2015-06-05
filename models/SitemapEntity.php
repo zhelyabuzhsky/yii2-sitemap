@@ -2,26 +2,26 @@
 namespace zhelyabuzhsky\sitemap\models;
 
 /**
- * Интерфейс для всех сущностей, которые могут записываться в sitemap.
+ * Interface for all entities to write in sitemap.
  */
 interface SitemapEntity
 {
     /**
-     * Возвращает строку для значения lastmod файла sitemap.
+     * Get lastmod value for sitemap file.
      *
      * @return string
      */
     public function getSitemapLastmod();
 
     /**
-     * Возвращает строку для значения changefreq файла sitemap.
+     * Get changefreq value for sitemap file.
      *
      * @return string
      */
     public function getSitemapChangefreq();
 
     /**
-     * Возвращает строку для значения priority файла sitemap.
+     * Get priority value for sitemap file.
      *
      * @return string
      */
@@ -29,14 +29,14 @@ interface SitemapEntity
 
 
     /**
-     * Возвращает строку для значения loc файла sitemap.
+     * Get loc value for sitemap file.
      *
      * @return string
      */
     public function getSitemapLoc();
 
     /**
-     * Возвращает источник данных для генерации файла sitemap.
+     * Get data source for sitemap file generation.
      *
      * @return \yii\db\ActiveQuery $dataSource
      */

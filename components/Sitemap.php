@@ -6,60 +6,61 @@ use yii\base\Component;
 use yii\base\Exception;
 
 /**
- * Генератор sitemap
+ * Sitemap generator.
  */
 class Sitemap extends Component
 {
     /**
-     * Максимальное число url в одном файле sitemap
+     * Max count of urls in one sitemap file.
+     *
      * @var int
      */
     public $maxUrlsCountInFile;
 
     /**
-     * Директория, в которой будут храниться файлы sitemap
+     * Directory to place sitemap files.
+     *
      * @var string
      */
     public $sitemapDirectory;
 
     /**
-     * Директория, в которой будут храниться файлы sitemap
-     * @var int
-     */
-    protected $directory;
-
-    /**
-     * Путь до текущего файла sitemap, который генерируется прямо сейчас
+     * Path to current sitemap file.
+     *
      * @var string
      */
     protected $path;
 
     /**
-     * Ресурс текущего файла sitemap, который генерируется прямо сейчас
+     * Handle of current sitemap file.
+     *
      * @var resource
      */
     protected $handle;
 
     /**
-     * Количество url в файле sitemap, который генерируется прямо сейчас
+     * Count of urls in current sitemap file.
+     *
      * @var int
      */
     protected $urlCount = 0;
 
     /**
-     * Порядковый номер генерируемого файла sitemap
+     * Number of current sitemap file.
+     *
      * @var int
      */
     protected $filesCount = 0;
 
     /**
-     * Массив источников данных для генерации sitemap
+     * Array of data sources for sitemap generation.
+     *
      * @var \yii\db\ActiveQuery[]
      */
     protected $dataSources = [];
 
     /**
-     * Создаёт индексный sitemap.xml.
+     * Create index file sitemap.xml.
      */
     protected function createIndexFile()
     {
@@ -92,15 +93,15 @@ class Sitemap extends Component
     }
 
     /**
-     * Обновляем файлы sitemap.
+     * Update sitemap file.
      */
-    protected function purgeSitemaps()
+    protected function updateSitemaps()
     {
-        // удаляем старые файлы sitemap
+        // delete old sitemap files
         foreach (glob("{$this->sitemapDirectory}/sitemap*.xml*") as $filePath) {
             unlink($filePath);
         }
-        // переименовываем новые файлы (без '_')
+        // rename new files (without '_')
         foreach (glob("{$this->sitemapDirectory}/_sitemap*.xml*") as $filePath) {
             $newFilePath = dirname($filePath) . '/' . str_replace('_', '', basename($filePath));
             rename($filePath, $newFilePath);
@@ -108,7 +109,7 @@ class Sitemap extends Component
     }
 
     /**
-     * Записывает шапку в файл sitemap.
+     * Write header to sitemap file.
      */
     protected function beginFile()
     {
@@ -125,7 +126,7 @@ class Sitemap extends Component
     }
 
     /**
-     * Записывает футер в файл sitemap.
+     * Write footer to sitemap file.
      */
     protected function closeFile()
     {
@@ -134,16 +135,17 @@ class Sitemap extends Component
     }
 
     /**
-     * Архивирует файл sitemap.
+     * Gzip sitemap file.
      */
     protected function gzipFile()
     {
         $gzipFileName = $this->path . '.gz';
-        // нужно делать именно так gzip файл, чтобы не было ошибок "unable fork process"
         exec("cat {$this->path} | gzip > $gzipFileName");
     }
 
     /**
+     * Add ActiveQuery from SitemapEntity model to Sitemap model.
+     *
      * @param \yii\db\ActiveQuery $dataSource
      */
     public function addDataSource($dataSource)
@@ -152,6 +154,8 @@ class Sitemap extends Component
     }
 
     /**
+     * Add SitemapEntity model to Sitemap model.
+     *
      * @param SitemapEntity $model
      * @return $this
      * @throws Exception
@@ -166,7 +170,7 @@ class Sitemap extends Component
     }
 
     /**
-     * Создаёт файл sitemap.
+     * Create sitemap file.
      */
     public function create()
     {
@@ -193,11 +197,11 @@ class Sitemap extends Component
             $this->gzipFile();
         }
         $this->createIndexFile();
-        $this->purgeSitemaps();
+        $this->updateSitemaps();
     }
 
     /**
-     * Записывает в sitemap сущность.
+     * Write entity to sitemap file.
      *
      * @param SitemapEntity $entity
      */
