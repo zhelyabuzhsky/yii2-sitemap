@@ -59,5 +59,3 @@ If you discover any security related issues, please email zhelyabuzhsky@gmail.co
 ## License
 
 GNU General Public License, version 2. Please see [License File](LICENSE.md) for more information.
-
-Happy coding!
