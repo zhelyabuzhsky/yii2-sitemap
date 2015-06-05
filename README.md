@@ -45,3 +45,15 @@ public function actionCreateSitemap()
 }
 ```
 to you console controller.
+
+## Features
+
+* multiple sitemaps (large sites)
+* index sitemap
+* gzip
+
+## Running Tests
+
+$ codecept run
+
+Happy coding!
