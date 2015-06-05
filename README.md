@@ -13,6 +13,11 @@ Via Composer
 $ composer require zhelyabuzhsky/yii2-sitemap
 ```
 
+## Features
+
+* multiple sitemaps (large sites)
+* index sitemap
+* gzip
 
 ## Usage
 
@@ -34,12 +39,6 @@ public function actionCreateSitemap()
     ->create();
 }
 ```
-
-## Features
-
-* multiple sitemaps (large sites)
-* index sitemap
-* gzip
 
 ## Testing
 
