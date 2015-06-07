@@ -26,7 +26,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
   [
     'class' => '\zhelyabuzhsky\sitemap\components\Sitemap',
     'maxUrlsCountInFile' => 10000,
-    'sitemapDirectory' => 'frontendmarket/web',
+    'sitemapDirectory' => 'frontend/web',
   ],
 ```
 
