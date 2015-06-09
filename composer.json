@@ -8,7 +8,7 @@
   "homepage": "https://github.com/zhelyabuzhsky/yii2-sitemap",
   "type": "yii2-extension",
   "minimum-stability": "dev",
-  "license": "GNU GPL v2.0",
+  "license": "GPL-2.0",
   "authors": [
     {
       "name": "Ilya Zhelyabuzhsky",
