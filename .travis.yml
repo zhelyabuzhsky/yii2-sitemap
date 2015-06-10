@@ -21,7 +21,10 @@ cache:
 install:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-dist --no-interaction
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 script:
-  - phpunit --verbose $PHPUNIT_FLAGS
+  - vendor/bin/phpunit --verbose $PHPUNIT_FLAGS
+
+after_script:
+  - php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
