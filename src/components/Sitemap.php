@@ -1,7 +1,7 @@
 <?php
 namespace zhelyabuzhsky\sitemap\components;
 
-use zhelyabuzhsky\sitemap\models\SitemapEntity;
+use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
 use yii\base\Component;
 use yii\base\Exception;
 
@@ -156,13 +156,13 @@ class Sitemap extends Component
     /**
      * Add SitemapEntity model to Sitemap model.
      *
-     * @param SitemapEntity $model
+     * @param SitemapEntityInterface $model
      * @return $this
      * @throws Exception
      */
     public function addModel($model)
     {
-        if (!((new $model()) instanceof SitemapEntity)) {
+        if (!((new $model()) instanceof SitemapEntityInterface)) {
             throw new Exception("Model $model does not implement interface SitemapEntity");
         }
         $this->addDataSource($model::getSitemapDataSource());
@@ -203,7 +203,7 @@ class Sitemap extends Component
     /**
      * Write entity to sitemap file.
      *
-     * @param SitemapEntity $entity
+     * @param SitemapEntityInterface $entity
      */
     protected function writeEntity($entity)
     {

@@ -4,7 +4,7 @@ namespace zhelyabuzhsky\sitemap\models;
 /**
  * Interface for all entities to write in sitemap.
  */
-interface SitemapEntity
+interface SitemapEntityInterface
 {
     /**
      * Get lastmod value for sitemap file.
