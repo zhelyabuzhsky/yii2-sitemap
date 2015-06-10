@@ -8,7 +8,7 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $sitemap = new Sitemap();
-        $sitemapDirectory = $sitemap->sitemapDirectory = 'tests/_output';
+        $sitemapDirectory = $sitemap->sitemapDirectory = 'tests/runtime';
         $sitemap->create();
         $sitemapFileNames = Array();
         foreach (glob("$sitemapDirectory/sitemap*") as $sitemapFilePath) {
@@ -21,5 +21,8 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
             'sitemap1.xml',
             'sitemap1.xml.gz',
         ));
+        foreach (glob("$sitemapDirectory/sitemap*") as $file) {
+            unlink($file);
+        }
     }
 }
