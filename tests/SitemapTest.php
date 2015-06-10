@@ -1,20 +1,15 @@
 <?php
-namespace tests\unit\components;
+namespace zhelyabuzhsky\sitemap\tests;
 
 use zhelyabuzhsky\sitemap\components\Sitemap;
-use Yii;
 
-class ComponentTest extends \PHPUnit_Framework_TestCase
+class SitemapTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $this->assertEquals(2, 1 + 1);
         $sitemap = new Sitemap();
-
         $sitemapDirectory = $sitemap->sitemapDirectory = 'tests/_output';
-
         $sitemap->create();
-
         $sitemapFileNames = Array();
         foreach (glob("$sitemapDirectory/sitemap*") as $sitemapFilePath) {
             $sitemapFileNames[] = basename($sitemapFilePath);

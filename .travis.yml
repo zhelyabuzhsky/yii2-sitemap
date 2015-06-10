@@ -19,10 +19,9 @@ cache:
     - $HOME/.composer/cache
 
 install:
-  - travis_retry composer self-update && composer --version
+  - travis_retry composer self-update
   - travis_retry composer install --prefer-dist --no-interaction
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - travis_retry composer global require "codeception/codeception=2.0.*" "codeception/specify=*" "codeception/verify=*"
 
 script:
-  - codecept build && codecept run
+  - phpunit --verbose $PHPUNIT_FLAGS
