@@ -9,15 +9,20 @@
   "type": "yii2-extension",
   "minimum-stability": "dev",
   "license": "GPL-2.0",
+  "support": {
+    "issues": "https://github.com/zhelyabuzhsky/yii2-sitemap/issues",
+    "source": "https://github.com/zhelyabuzhsky/yii2-sitemap"
+  },
   "authors": [
     {
       "name": "Ilya Zhelyabuzhsky",
       "email": "zhelyabuzhsky@gmail.com"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "php": ">=5.4.0",
-    "yiisoft/yii2": "*"
+    "yiisoft/yii2": ">=2.0.4"
   },
   "autoload": {
     "psr-4": {
