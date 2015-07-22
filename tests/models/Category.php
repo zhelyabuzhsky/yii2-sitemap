@@ -8,9 +8,7 @@ class Category extends ActiveRecord implements SitemapEntityInterface
 {
 
     /**
-     * Get lastmod value for sitemap file.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getSitemapLastmod()
     {
@@ -18,9 +16,7 @@ class Category extends ActiveRecord implements SitemapEntityInterface
     }
 
     /**
-     * Get changefreq value for sitemap file.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getSitemapChangefreq()
     {
@@ -28,9 +24,7 @@ class Category extends ActiveRecord implements SitemapEntityInterface
     }
 
     /**
-     * Get priority value for sitemap file.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getSitemapPriority()
     {
@@ -38,9 +32,7 @@ class Category extends ActiveRecord implements SitemapEntityInterface
     }
 
     /**
-     * Get loc value for sitemap file.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getSitemapLoc()
     {
@@ -48,9 +40,7 @@ class Category extends ActiveRecord implements SitemapEntityInterface
     }
 
     /**
-     * Get data source for sitemap file generation.
-     *
-     * @return \yii\db\ActiveQuery $dataSource
+     * @inheritdoc
      */
     public static function getSitemapDataSource()
     {

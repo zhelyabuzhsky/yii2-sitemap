@@ -17,7 +17,7 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->path . '/' . 'sitemap.xml', 'test');
     }
 
-    public function testDoesNotInterface()
+    public function testInterface()
     {
         $this->setExpectedException('\Exception');
         $mock = $this->getMock('Fake');

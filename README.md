@@ -40,8 +40,8 @@ public function actionCreateSitemap()
     ->addModel(Item::class)
     ->addModel(Category::class)
     ->setDisallowUrls([
-      '#cat1/cat2#',
-      '#cat1/cat3$',
+      '#url1#',
+      '#url2$#',
     ])
     ->create();
 }

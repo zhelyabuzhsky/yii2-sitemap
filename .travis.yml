@@ -21,11 +21,12 @@ cache:
 install:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-dist --no-interaction
-  - mysql -e 'create database yii2_sitemap;'
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+
+before_script:
+  - mysql -e 'create database yii2_many_to_many;'
 
 script:
-  - vendor/bin/phpunit --verbose $PHPUNIT_FLAGS
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover --verbose $PHPUNIT_FLAGS
 
 after_script:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover; fi
