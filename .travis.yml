@@ -21,10 +21,10 @@ cache:
 install:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-dist --no-interaction
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 script:
   - vendor/bin/phpunit --verbose $PHPUNIT_FLAGS
 
 after_script:
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover; fi
