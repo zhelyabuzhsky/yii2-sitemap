@@ -8,6 +8,7 @@ php:
   - hhvm
 
 matrix:
+  fast_finish: true
   allow_failures:
     - php: 7.0
 
@@ -20,10 +21,8 @@ cache:
 install:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-dist --no-interaction
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
-
-before_script:
   - mysql -e 'create database yii2_sitemap;'
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 script:
   - vendor/bin/phpunit --verbose $PHPUNIT_FLAGS
