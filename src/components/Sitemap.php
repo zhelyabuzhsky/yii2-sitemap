@@ -60,6 +60,11 @@ class Sitemap extends Component
     protected $dataSources = [];
 
     /**
+     * @var array
+     */
+    protected $disallowUrls = [];
+
+    /**
      * Create index file sitemap.xml.
      */
     protected function createIndexFile()
@@ -180,6 +185,9 @@ class Sitemap extends Component
             /** @var \yii\db\ActiveQuery $dataSource */
             foreach ($dataSource->batch(100) as $entities) {
                 foreach ($entities as $entity) {
+                    if ($this->isDisallowUrls($entity->getSitemapLoc())) {
+                        continue;
+                    }
                     if ($this->urlCount === $this->maxUrlsCountInFile) {
                         $this->urlCount = 0;
                         $this->closeFile();
@@ -198,6 +206,34 @@ class Sitemap extends Component
         }
         $this->createIndexFile();
         $this->updateSitemaps();
+    }
+
+    /**
+     * Set disallow pattern url.
+     *
+     * @param array $urls
+     * @return $this
+     */
+    public function setDisallowUrls($urls)
+    {
+        $this->disallowUrls = $urls;
+        return $this;
+    }
+
+    /**
+     * Checking for validity.
+     *
+     * @param string $url
+     * @return bool
+     */
+    protected function isDisallowUrls($url)
+    {
+        foreach ($this->disallowUrls as $disallowUrl) {
+            if (preg_match($disallowUrl, $url) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
