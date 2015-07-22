@@ -23,7 +23,7 @@ install:
   - travis_retry composer install --prefer-dist --no-interaction
 
 before_script:
-  - mysql -e 'create database yii2_many_to_many;'
+  - mysql -e 'create database yii2_sitemap;'
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover --verbose $PHPUNIT_FLAGS
