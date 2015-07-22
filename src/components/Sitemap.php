@@ -185,7 +185,7 @@ class Sitemap extends Component
             /** @var \yii\db\ActiveQuery $dataSource */
             foreach ($dataSource->batch(100) as $entities) {
                 foreach ($entities as $entity) {
-                    if ($this->isDisallowUrls($entity->getSitemapLoc())) {
+                    if ($this->isDisallowUrl($entity->getSitemapLoc())) {
                         continue;
                     }
                     if ($this->urlCount === $this->maxUrlsCountInFile) {
@@ -226,7 +226,7 @@ class Sitemap extends Component
      * @param string $url
      * @return bool
      */
-    protected function isDisallowUrls($url)
+    protected function isDisallowUrl($url)
     {
         foreach ($this->disallowUrls as $disallowUrl) {
             if (preg_match($disallowUrl, $url) != false) {

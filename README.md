@@ -20,7 +20,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 * multiple sitemaps (large sites)
 * index sitemap
 * gzip
-* disallow urls
+* disallow urls (Regular expression array)
 
 ## Usage
 
