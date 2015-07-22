@@ -31,7 +31,7 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
             'maxUrlsCountInFile' => 1
         ]);
         $sitemapDirectory = $sitemap->sitemapDirectory = $this->path;
-        $sitemap->addModel(Category::class);
+        $sitemap->addModel(Category::className());
         $sitemap->setDisallowUrls(['#category_2#']);
         $sitemap->create();
         $sitemapFileNames = Array();

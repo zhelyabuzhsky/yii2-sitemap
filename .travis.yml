@@ -23,6 +23,9 @@ install:
   - travis_retry composer install --prefer-dist --no-interaction
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
+before_script:
+  - mysql -e 'create database yii2_sitemap;'
+
 script:
   - vendor/bin/phpunit --verbose $PHPUNIT_FLAGS
 

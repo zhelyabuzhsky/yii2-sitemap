@@ -229,7 +229,7 @@ class Sitemap extends Component
     protected function isDisallowUrls($url)
     {
         foreach ($this->disallowUrls as $disallowUrl) {
-            if (preg_match($disallowUrl, $url) !== false) {
+            if (preg_match($disallowUrl, $url) != false) {
                 return true;
             }
         }
