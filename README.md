@@ -20,6 +20,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 * multiple sitemaps (large sites)
 * index sitemap
 * gzip
+* disallow urls
 
 ## Usage
 
@@ -38,6 +39,10 @@ public function actionCreateSitemap()
   \Yii::$app->sitemap
     ->addModel(Item::class)
     ->addModel(Category::class)
+    ->setDisallowUrls([
+      '#cat1/cat2#',
+      '#cat1/cat3$',
+    ])
     ->create();
 }
 ```
