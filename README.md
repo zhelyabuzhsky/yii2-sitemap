@@ -50,7 +50,7 @@ public function actionCreateSitemap()
 ## Testing
 
 ``` bash
-$ codecept run
+$ ./vendor/bin/phpunit
 ```
 
 ## Security
