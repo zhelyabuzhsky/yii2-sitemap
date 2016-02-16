@@ -20,7 +20,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 * multiple sitemaps (large sites)
 * index sitemap
 * gzip
-* disallow urls (Regular expression array)
+* disallow urls (regular expression array)
 
 ## Usage
 
@@ -37,8 +37,8 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 public function actionCreateSitemap()
 {
   \Yii::$app->sitemap
-    ->addModel(Item::class)
-    ->addModel(Category::class)
+    ->addModel(Item::className())
+    ->addModel(Category::className())
     ->setDisallowUrls([
       '#url1#',
       '#url2$#',
