@@ -146,7 +146,24 @@ class Sitemap extends Component
     protected function gzipFile()
     {
         $gzipFileName = $this->path . '.gz';
-        exec("cat {$this->path} | gzip > $gzipFileName");
+        $mode = 'wb9';
+        $error = false;
+        if ($fp_out = gzopen($gzipFileName, $mode)) {
+            if ($fp_in = fopen($this->path, 'rb')) {
+                while (!feof($fp_in))
+                    gzwrite($fp_out, fread($fp_in, 1024 * 512));
+                fclose($fp_in);
+            } else {
+                $error = true;
+            }
+            gzclose($fp_out);
+        } else {
+            $error = true;
+        }
+        if ($error)
+            return false;
+        else
+            return $gzipFileName;
     }
 
     /**
