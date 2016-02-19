@@ -23,7 +23,7 @@ install:
   - travis_retry composer install --prefer-dist --no-interaction
 
 before_script:
-  - mysql -e 'create database yii2_sitemap;'
+  - psql -c 'create database yii2_sitemap;' -U postgres
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover --verbose $PHPUNIT_FLAGS

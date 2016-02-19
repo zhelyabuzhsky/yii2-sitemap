@@ -1,4 +1,5 @@
 <?php
+
 namespace zhelyabuzhsky\sitemap\tests;
 
 use zhelyabuzhsky\sitemap\components\Sitemap;
@@ -6,14 +7,24 @@ use zhelyabuzhsky\sitemap\tests\models\Category;
 
 class SitemapTest extends \PHPUnit_Framework_TestCase
 {
-
     private $path = 'tests/runtime';
 
     public function setUp()
     {
-        \Yii::$app->db
-            ->createCommand(file_get_contents(__DIR__ . '/db/mysql.sql'))
-            ->execute();
+        \Yii::$app->db->createCommand(
+            'DROP TABLE IF EXISTS category;'
+        )->execute();
+        \Yii::$app->db->createCommand(
+            'CREATE TABLE category (id INTEGER NOT NULL,
+                                    name CHARACTER VARYING(255) NOT NULL,
+                                    slug CHARACTER VARYING(255) NOT NULL);'
+        )->execute();
+        \Yii::$app->db->createCommand(
+            'INSERT INTO category VALUES (1, \'Category 1\', \'category_1\'),
+                                         (2, \'Category 2\', \'category_2\'),
+                                         (3, \'Category 3\', \'category_3\');'
+        )->execute();
+
         file_put_contents($this->path . '/' . 'sitemap.xml', 'test');
     }
 
