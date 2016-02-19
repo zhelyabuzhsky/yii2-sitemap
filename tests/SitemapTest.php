@@ -9,7 +9,7 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
 {
     private $path = 'tests/runtime';
 
-    public function setUp()
+    protected function setUp()
     {
         \Yii::$app->db->createCommand(
             'DROP TABLE IF EXISTS category;'
@@ -26,6 +26,14 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         )->execute();
 
         file_put_contents($this->path . '/' . 'sitemap.xml', 'test');
+    }
+
+    protected function tearDown()
+    {
+        $sitemapDirectory = $this->path;
+        foreach (glob("$sitemapDirectory/sitemap*") as $file) {
+            unlink($file);
+        }
     }
 
     public function testInterface()
@@ -58,14 +66,23 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
             'sitemap2.xml',
             'sitemap2.xml.gz',
         ));
+
         $xmlData = file_get_contents("$sitemapDirectory/sitemap.xml");
         $this->assertNotFalse(strpos($xmlData, '<?xml version="1.0" encoding="UTF-8"?>'));
 
         $xmlData = file_get_contents("$sitemapDirectory/sitemap2.xml");
         $this->assertNotFalse(strpos($xmlData, '<loc>http://localhost/category_3</loc>'));
 
-        foreach (glob("$sitemapDirectory/sitemap*") as $file) {
-            unlink($file);
-        }
+        $gzSitemap = gzopen("$sitemapDirectory/sitemap.xml.gz", "r");
+        $sitemap = fopen("$sitemapDirectory/sitemap.xml", "r");
+        $this->assertEquals(fread($gzSitemap, 2000), fread($sitemap, 2000));
+        gzclose($gzSitemap);
+        fclose($sitemap);
+
+        $gzSitemap = gzopen("$sitemapDirectory/sitemap2.xml.gz", "r");
+        $sitemap = fopen("$sitemapDirectory/sitemap2.xml", "r");
+        $this->assertEquals(fread($gzSitemap, 2000), fread($sitemap, 2000));
+        gzclose($gzSitemap);
+        fclose($sitemap);
     }
 }
