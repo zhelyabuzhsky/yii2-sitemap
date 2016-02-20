@@ -179,7 +179,7 @@ class Sitemap extends Component
     /**
      * Add SitemapEntity model to Sitemap model.
      *
-     * @param SitemapEntityInterface $model
+     * @param SitemapEntityInterface|string $model
      * @return $this
      * @throws Exception
      */

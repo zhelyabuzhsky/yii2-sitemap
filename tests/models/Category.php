@@ -1,4 +1,5 @@
 <?php
+
 namespace zhelyabuzhsky\sitemap\tests\models;
 
 use yii\db\ActiveRecord;
@@ -6,7 +7,6 @@ use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
 
 class Category extends ActiveRecord implements SitemapEntityInterface
 {
-
     /**
      * @inheritdoc
      */
