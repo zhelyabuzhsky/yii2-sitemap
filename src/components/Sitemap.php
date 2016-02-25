@@ -1,4 +1,5 @@
 <?php
+
 namespace zhelyabuzhsky\sitemap\components;
 
 use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
@@ -123,7 +124,7 @@ class Sitemap extends Component
         $this->handle = fopen($this->path, 'w');
         fwrite(
             $this->handle,
-            '<?xml version="1.0" encoding="UTF-8"?>' .
+            '<?xml version="1.0" encoding="UTF-8"?>' . "\n" .
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
             ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"' .
             ' xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">'
@@ -135,7 +136,7 @@ class Sitemap extends Component
      */
     protected function closeFile()
     {
-        fwrite($this->handle, '</urlset>');
+        fwrite($this->handle, "\n" . '</urlset>');
         fclose($this->handle);
     }
 
@@ -145,7 +146,24 @@ class Sitemap extends Component
     protected function gzipFile()
     {
         $gzipFileName = $this->path . '.gz';
-        exec("cat {$this->path} | gzip > $gzipFileName");
+        $mode = 'wb9';
+        $error = false;
+        if ($fp_out = gzopen($gzipFileName, $mode)) {
+            if ($fp_in = fopen($this->path, 'rb')) {
+                while (!feof($fp_in))
+                    gzwrite($fp_out, fread($fp_in, 1024 * 512));
+                fclose($fp_in);
+            } else {
+                $error = true;
+            }
+            gzclose($fp_out);
+        } else {
+            $error = true;
+        }
+        if ($error)
+            return false;
+        else
+            return $gzipFileName;
     }
 
     /**
@@ -161,7 +179,7 @@ class Sitemap extends Component
     /**
      * Add SitemapEntity model to Sitemap model.
      *
-     * @param SitemapEntityInterface $model
+     * @param SitemapEntityInterface|string $model
      * @return $this
      * @throws Exception
      */
@@ -245,11 +263,12 @@ class Sitemap extends Component
     {
         fwrite(
             $this->handle,
-            '<url>' .
-            '   <loc>' . $entity->getSitemapLoc() . '</loc>' .
-            '   <lastmod>' . $entity->getSitemapLastmod() . '</lastmod>' .
-            '   <changefreq>' . $entity->getSitemapChangefreq() . '</changefreq>' .
-            '   <priority>' . $entity->getSitemapPriority() . '</priority>' .
+            "\n" .
+            '<url>' . "\n" .
+            '   <loc>' . $entity->getSitemapLoc() . '</loc>' . "\n" .
+            '   <lastmod>' . $entity->getSitemapLastmod() . '</lastmod>' . "\n" .
+            '   <changefreq>' . $entity->getSitemapChangefreq() . '</changefreq>' . "\n" .
+            '   <priority>' . $entity->getSitemapPriority() . '</priority>' . "\n" .
             '</url>'
         );
     }

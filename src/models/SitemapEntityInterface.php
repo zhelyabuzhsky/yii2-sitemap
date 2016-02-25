@@ -1,4 +1,5 @@
 <?php
+
 namespace zhelyabuzhsky\sitemap\models;
 
 /**
