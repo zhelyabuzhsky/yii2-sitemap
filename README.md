@@ -64,4 +64,4 @@ If you discover any security related issues, please email zhelyabuzhsky@gmail.co
 
 ## License
 
-GNU General Public License, version 2. Please see [License File](LICENSE) for more information.
+GNU General Public License, version 3. Please see [License File](LICENSE) for more information.
