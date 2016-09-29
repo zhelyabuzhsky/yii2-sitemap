@@ -8,7 +8,7 @@
   "homepage": "https://github.com/zhelyabuzhsky/yii2-sitemap",
   "type": "yii2-extension",
   "minimum-stability": "dev",
-  "license": "GPL-2.0",
+  "license": "GPL-3.0",
   "support": {
     "issues": "https://github.com/zhelyabuzhsky/yii2-sitemap/issues",
     "source": "https://github.com/zhelyabuzhsky/yii2-sitemap"
@@ -16,7 +16,7 @@
   "authors": [
     {
       "name": "Ilya Zhelyabuzhsky",
-      "email": "zhelyabuzhsky@gmail.com"
+      "email": "zhelyabuzhsky@icloud.com"
     }
   ],
   "require": {
