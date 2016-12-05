@@ -28,9 +28,9 @@ class Sitemap extends Component
     /**
      * List of used optional attributes.
      *
-     * @var string
+     * @var string[]
      */
-    public $usedAttributes = ['changefreq', 'lastmod', 'priority'];
+    public $optionalAttributes = ['changefreq', 'lastmod', 'priority'];
 
     /**
      * Path to current sitemap file.
@@ -271,9 +271,11 @@ class Sitemap extends Component
         $str = PHP_EOL .
             '<url>' . PHP_EOL .
             '    <loc>' . $entity->getSitemapLoc() . '</loc>' . PHP_EOL;
-        foreach ($this->usedAttributes as $attribute) {
+
+        foreach ($this->optionalAttributes as $attribute) {
             $str .= sprintf('    <%s>%s</%1$s>', $attribute, call_user_func([$entity, 'getSitemap' . $attribute])) . PHP_EOL;
         }
+
         $str .=
             '</url>';
 
