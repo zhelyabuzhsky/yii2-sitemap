@@ -26,6 +26,13 @@ class Sitemap extends Component
     public $sitemapDirectory;
 
     /**
+     * List of used optional attributes.
+     *
+     * @var string
+     */
+    public $usedAttributes = ['changefreq', 'lastmod', 'priority'];
+
+    /**
      * Path to current sitemap file.
      *
      * @var string
@@ -261,15 +268,15 @@ class Sitemap extends Component
      */
     protected function writeEntity($entity)
     {
-        fwrite(
-            $this->handle,
-            "\n" .
-            '<url>' . "\n" .
-            '   <loc>' . $entity->getSitemapLoc() . '</loc>' . "\n" .
-            '   <lastmod>' . $entity->getSitemapLastmod() . '</lastmod>' . "\n" .
-            '   <changefreq>' . $entity->getSitemapChangefreq() . '</changefreq>' . "\n" .
-            '   <priority>' . $entity->getSitemapPriority() . '</priority>' . "\n" .
-            '</url>'
-        );
+        $str = PHP_EOL .
+            '<url>' . PHP_EOL .
+            '    <loc>' . $entity->getSitemapLoc() . '</loc>' . PHP_EOL;
+        foreach ($this->usedAttributes as $attribute) {
+            $str .= sprintf('    <%s>%s</%1$s>', $attribute, call_user_func([$entity, 'getSitemap' . $attribute])) . PHP_EOL;
+        }
+        $str .=
+            '</url>';
+
+        fwrite($this->handle, $str);
     }
 }
