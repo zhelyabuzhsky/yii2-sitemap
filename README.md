@@ -43,7 +43,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
   ],
 ```
 
-where:
+where
 * maxUrlsCountInFile - max count of urls in one sitemap file;
 * sitemapDirectory - directory to place sitemap files;
 * optionalAttributes - list of used optional attributes.
