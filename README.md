@@ -24,14 +24,32 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 
 ## Usage
 
+### Basic initialization
+
+```php
+'sitemap' =>
+  [
+    'class' => '\zhelyabuzhsky\sitemap\components\Sitemap',
+  ],
+```
+
+### Advanced initialization
+
 ```php
 'sitemap' =>
   [
     'class' => '\zhelyabuzhsky\sitemap\components\Sitemap',
     'maxUrlsCountInFile' => 10000,
     'sitemapDirectory' => 'frontend/web',
+    'optionalAttributes' => ['changefreq', 'lastmod', 'priority']
   ],
 ```
+where:
+* maxUrlsCountInFile - max count of urls in one sitemap file;
+* sitemapDirectory - directory to place sitemap files;
+* optionalAttributes - list of used optional attributes.
+
+### Console action
 
 ```php
 public function actionCreateSitemap()
