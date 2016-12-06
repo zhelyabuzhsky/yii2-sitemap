@@ -268,16 +268,18 @@ class Sitemap extends Component
      */
     protected function writeEntity($entity)
     {
-        $str = PHP_EOL .
-            '<url>' . PHP_EOL .
-            '    <loc>' . $entity->getSitemapLoc() . '</loc>' . PHP_EOL;
+        $str = PHP_EOL . '<url>' . PHP_EOL;
 
-        foreach ($this->optionalAttributes as $attribute) {
-            $str .= sprintf('    <%s>%s</%1$s>', $attribute, call_user_func([$entity, 'getSitemap' . $attribute])) . PHP_EOL;
+        foreach (
+            array_merge(
+                ['loc'],
+                $this->optionalAttributes
+            ) as $attribute
+        ) {
+            $str .= sprintf("\t<%s>%s</%1\$s>", $attribute, call_user_func([$entity, 'getSitemap' . $attribute])) . PHP_EOL;
         }
 
-        $str .=
-            '</url>';
+        $str .= '</url>';
 
         fwrite($this->handle, $str);
     }
