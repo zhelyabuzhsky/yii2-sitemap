@@ -71,7 +71,7 @@ class Sitemap extends Component
      *
      * @var int
      */
-    protected $maxFileSize = 10 * 1024 * 1024;
+    protected $maxFileSize = 10485760; // 10 * 1024 * 1024
 
     /**
      * Generated sitemap groups file count.
