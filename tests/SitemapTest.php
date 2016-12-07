@@ -101,12 +101,12 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         }
         $this->assertEquals($sitemapFileNames, Array
         (
-            'sitemap.xml',
-            'sitemap.xml.gz',
             'sitemap-category.xml',
             'sitemap-category.xml.gz',
             'sitemap-category2.xml',
             'sitemap-category2.xml.gz',
+            'sitemap.xml',
+            'sitemap.xml.gz',
         ));
 
         $xmlData = file_get_contents("$sitemapDirectory/sitemap.xml");
