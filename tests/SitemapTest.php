@@ -103,16 +103,16 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         (
             'sitemap.xml',
             'sitemap.xml.gz',
-            'sitemap_category.xml',
-            'sitemap_category.xml.gz',
-            'sitemap_category2.xml',
-            'sitemap_category2.xml.gz',
+            'sitemap-category.xml',
+            'sitemap-category.xml.gz',
+            'sitemap-category2.xml',
+            'sitemap-category2.xml.gz',
         ));
 
         $xmlData = file_get_contents("$sitemapDirectory/sitemap.xml");
         $this->assertNotFalse(strpos($xmlData, '<?xml version="1.0" encoding="UTF-8"?>'));
 
-        $xmlData = file_get_contents("$sitemapDirectory/sitemap_category2.xml");
+        $xmlData = file_get_contents("$sitemapDirectory/sitemap-category2.xml");
         $this->assertNotFalse(strpos($xmlData, '<loc>http://localhost/category_3</loc>'));
 
         $gzSitemap = gzopen("$sitemapDirectory/sitemap.xml.gz", "r");
@@ -121,8 +121,8 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         gzclose($gzSitemap);
         fclose($sitemap);
 
-        $gzSitemap = gzopen("$sitemapDirectory/sitemap_category2.xml.gz", "r");
-        $sitemap = fopen("$sitemapDirectory/sitemap_category2.xml", "r");
+        $gzSitemap = gzopen("$sitemapDirectory/sitemap-category2.xml.gz", "r");
+        $sitemap = fopen("$sitemapDirectory/sitemap-category2.xml", "r");
         $this->assertEquals(fread($gzSitemap, 2000), fread($sitemap, 2000));
         gzclose($gzSitemap);
         fclose($sitemap);

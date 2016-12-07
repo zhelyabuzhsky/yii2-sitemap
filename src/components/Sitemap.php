@@ -160,7 +160,7 @@ class Sitemap extends Component
         $this->urlCount = 0;
 
         $fileName = 'sitemap'
-            . ($this->sitemapGroup != '' ? '_' . $this->sitemapGroup : '')
+            . ($this->sitemapGroup != '' ? '-' . $this->sitemapGroup : '')
             . ($this->sitemapGroup == '' || $this->fileIndex > 1 ? $this->fileIndex : '' )
             . '.xml';
 
