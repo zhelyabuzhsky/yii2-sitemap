@@ -42,13 +42,15 @@ $ composer require zhelyabuzhsky/yii2-sitemap
     'maxUrlsCountInFile' => 10000,
     'sitemapDirectory' => 'frontend/web',
     'optionalAttributes' => ['changefreq', 'lastmod', 'priority'],
+    'maxFileSize' => '10M',
   ],
 ```
 
 where:
 * maxUrlsCountInFile - max count of urls in one sitemap file;
 * sitemapDirectory - directory to place sitemap files;
-* optionalAttributes - list of used optional attributes.
+* optionalAttributes - list of used optional attributes;
+* maxFileSize - maximal size of sitemap file. By default 10M.
 
 ### Console action
 
@@ -58,6 +60,22 @@ public function actionCreateSitemap()
   \Yii::$app->sitemap
     ->addModel(Item::className())
     ->addModel(Category::className())
+    ->setDisallowUrls([
+      '#url1#',
+      '#url2$#',
+    ])
+    ->create();
+}
+```
+
+### Console action with grouping
+
+```php
+public function actionCreateSitemap()
+{
+  \Yii::$app->sitemap
+    ->addModel(Item::className(), 'item')
+    ->addModel(Category::className(), 'category')
     ->setDisallowUrls([
       '#url1#',
       '#url2$#',
