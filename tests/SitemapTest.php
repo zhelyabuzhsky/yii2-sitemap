@@ -85,4 +85,46 @@ class SitemapTest extends \PHPUnit_Framework_TestCase
         gzclose($gzSitemap);
         fclose($sitemap);
     }
+
+    public function testGroupCreate()
+    {
+        $sitemap = new Sitemap([
+            'maxUrlsCountInFile' => 1
+        ]);
+        $sitemapDirectory = $sitemap->sitemapDirectory = $this->path;
+        $sitemap->addModel(Category::className(), 'Category');
+        $sitemap->setDisallowUrls(['#category_2#']);
+        $sitemap->create();
+        $sitemapFileNames = Array();
+        foreach (glob("$sitemapDirectory/sitemap*") as $sitemapFilePath) {
+            $sitemapFileNames[] = basename($sitemapFilePath);
+        }
+        $this->assertEquals($sitemapFileNames, Array
+        (
+            'sitemap-category.xml',
+            'sitemap-category.xml.gz',
+            'sitemap-category2.xml',
+            'sitemap-category2.xml.gz',
+            'sitemap.xml',
+            'sitemap.xml.gz',
+        ));
+
+        $xmlData = file_get_contents("$sitemapDirectory/sitemap.xml");
+        $this->assertNotFalse(strpos($xmlData, '<?xml version="1.0" encoding="UTF-8"?>'));
+
+        $xmlData = file_get_contents("$sitemapDirectory/sitemap-category2.xml");
+        $this->assertNotFalse(strpos($xmlData, '<loc>http://localhost/category_3</loc>'));
+
+        $gzSitemap = gzopen("$sitemapDirectory/sitemap.xml.gz", "r");
+        $sitemap = fopen("$sitemapDirectory/sitemap.xml", "r");
+        $this->assertEquals(fread($gzSitemap, 2000), fread($sitemap, 2000));
+        gzclose($gzSitemap);
+        fclose($sitemap);
+
+        $gzSitemap = gzopen("$sitemapDirectory/sitemap-category2.xml.gz", "r");
+        $sitemap = fopen("$sitemapDirectory/sitemap-category2.xml", "r");
+        $this->assertEquals(fread($gzSitemap, 2000), fread($sitemap, 2000));
+        gzclose($gzSitemap);
+        fclose($sitemap);
+    }
 }
