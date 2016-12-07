@@ -54,13 +54,6 @@ class Sitemap extends Component
     protected $urlCount = 0;
 
     /**
-     * Number of current sitemap file.
-     *
-     * @var int
-     */
-    protected $filesCount = 0;
-
-    /**
      * Array of data sources for sitemap generation.
      *
      * @var \yii\db\ActiveQuery[]
@@ -73,6 +66,28 @@ class Sitemap extends Component
     protected $disallowUrls = [];
 
     /**
+     * Maximal size of sitemap files.
+     * Default value: 10M
+     *
+     * @var int
+     */
+    protected $maxFileSize = 10 * 1024 * 1024;
+
+    /**
+     * Generated sitemap groups file count.
+     *
+     * @var int
+     */
+    protected $fileIndex = 0;
+
+    /**
+     * List of generated files.
+     *
+     * @var string[]
+     */
+    protected $generatedFiles = [];
+
+    /**
      * Create index file sitemap.xml.
      */
     protected function createIndexFile()
@@ -82,7 +97,7 @@ class Sitemap extends Component
         fwrite(
             $this->handle,
             '<?xml version="1.0" encoding="UTF-8"?>' .
-            '   <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
         );
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
@@ -91,13 +106,14 @@ class Sitemap extends Component
         if (isset(\Yii::$app->urlManager->baseUrl)) {
             $baseUrl = \Yii::$app->urlManager->baseUrl;
         }
-        for ($i = 1; $i <= $this->filesCount; $i++) {
+        foreach ($this->generatedFiles as $fileName) {
             fwrite(
                 $this->handle,
-                '<sitemap>' .
-                "   <loc>{$baseUrl}/sitemap{$i}.xml.gz</loc>" .
-                "   <lastmod>{$lastmod}</lastmod>" .
-                '</sitemap>'
+                sprintf(
+                    '<sitemap><loc>%s</loc><lastmod>%s</lastmod></sitemap>',
+                    $baseUrl . '/' . $fileName . '.gz',
+                    $lastmod
+                )
             );
         }
         fwrite($this->handle, '</sitemapindex>');
@@ -116,7 +132,7 @@ class Sitemap extends Component
         }
         // rename new files (without '_')
         foreach (glob("{$this->sitemapDirectory}/_sitemap*.xml*") as $filePath) {
-            $newFilePath = dirname($filePath) . '/' . str_replace('_', '', basename($filePath));
+            $newFilePath = dirname($filePath) . '/' . substr(basename($filePath), 1);
             rename($filePath, $newFilePath);
         }
     }
@@ -126,8 +142,13 @@ class Sitemap extends Component
      */
     protected function beginFile()
     {
-        $this->filesCount++;
-        $this->path = "{$this->sitemapDirectory}/_sitemap{$this->filesCount}.xml";
+        ++$this->fileIndex;
+        $this->urlCount = 0;
+
+        $fileName = 'sitemap' . $this->fileIndex . '.xml';
+        $this->path = $this->sitemapDirectory . '/_' . $fileName;
+        $this->generatedFiles[] = $fileName;
+
         $this->handle = fopen($this->path, 'w');
         fwrite(
             $this->handle,
@@ -143,7 +164,7 @@ class Sitemap extends Component
      */
     protected function closeFile()
     {
-        fwrite($this->handle, "\n" . '</urlset>');
+        fwrite($this->handle, PHP_EOL . '</urlset>');
         fclose($this->handle);
     }
 
@@ -204,6 +225,7 @@ class Sitemap extends Component
      */
     public function create()
     {
+        $this->fileIndex = 0;
         $this->beginFile();
 
         foreach ($this->dataSources as $dataSource) {
@@ -213,8 +235,7 @@ class Sitemap extends Component
                     if ($this->isDisallowUrl($entity->getSitemapLoc())) {
                         continue;
                     }
-                    if ($this->urlCount === $this->maxUrlsCountInFile) {
-                        $this->urlCount = 0;
+                    if ($this->maxUrlsCountInFile > 0 && $this->urlCount === $this->maxUrlsCountInFile) {
                         $this->closeFile();
                         $this->gzipFile();
                         $this->beginFile();
@@ -225,10 +246,11 @@ class Sitemap extends Component
             }
         }
 
-        if ($this->urlCount >= 0) {
+        if (is_resource($this->handle)) {
             $this->closeFile();
             $this->gzipFile();
         }
+
         $this->createIndexFile();
         $this->updateSitemaps();
     }
@@ -243,6 +265,26 @@ class Sitemap extends Component
     {
         $this->disallowUrls = $urls;
         return $this;
+    }
+
+    /**
+     * Set maximal size of sitemap files
+     * @param $size
+     */
+    public function setMaxFileSize($size)
+    {
+        $fileSizeAbbr = ['k', 'm', 'g', 't'];
+        if (!is_int($size)) {
+            if (is_string($size) && preg_match('/^([\d]*)(' . implode('|', $fileSizeAbbr) . ')?$/i', $size, $matches)) {
+                $size = $matches[1];
+                if (isset($matches[2])) {
+                    $size = $size * pow(1024, array_search(strtolower($matches[2]), $fileSizeAbbr) + 1);
+                }
+            } else {
+                $size = intval($size);
+            }
+        }
+        $this->maxFileSize = $size;
     }
 
     /**
@@ -280,6 +322,13 @@ class Sitemap extends Component
         }
 
         $str .= '</url>';
+
+        $fileStat = fstat($this->handle);
+        if ($this->maxFileSize > 0 && $fileStat['size'] + strlen($str) > $this->maxFileSize) {
+            $this->closeFile();
+            $this->gzipFile();
+            $this->beginFile();
+        }
 
         fwrite($this->handle, $str);
     }
