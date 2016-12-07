@@ -1,8 +1,6 @@
 # yii2-sitemap
 
 [![Build Status](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap.svg)](https://travis-ci.org/zhelyabuzhsky/yii2-sitemap)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/zhelyabuzhsky/yii2-sitemap/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/zhelyabuzhsky/yii2-sitemap/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/zhelyabuzhsky/yii2-sitemap/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/zhelyabuzhsky/yii2-sitemap/?branch=master)
 [![Total Downloads](https://poser.pugx.org/zhelyabuzhsky/yii2-sitemap/downloads)](https://packagist.org/packages/zhelyabuzhsky/yii2-sitemap)
 
 A Yii2 extension to generate sitemap files for large web-sites in console
@@ -46,7 +44,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
   ],
 ```
 
-where:
+where
 * maxUrlsCountInFile - max count of urls in one sitemap file;
 * sitemapDirectory - directory to place sitemap files;
 * optionalAttributes - list of used optional attributes;
