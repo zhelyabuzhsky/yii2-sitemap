@@ -97,7 +97,7 @@ class Sitemap extends Component
         fwrite(
             $this->handle,
             '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
-            "\t" . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
         );
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
