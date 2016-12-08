@@ -96,8 +96,8 @@ class Sitemap extends Component
         $this->handle = fopen($this->path, 'w');
         fwrite(
             $this->handle,
-            '<?xml version="1.0" encoding="UTF-8"?>' .
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
+            "\t" . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
         );
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
@@ -109,14 +109,14 @@ class Sitemap extends Component
         foreach ($this->generatedFiles as $fileName) {
             fwrite(
                 $this->handle,
-                sprintf(
-                    '<sitemap><loc>%s</loc><lastmod>%s</lastmod></sitemap>',
-                    $baseUrl . '/' . $fileName . '.gz',
-                    $lastmod
-                )
+                PHP_EOL .
+                '<sitemap>' . PHP_EOL .
+                "\t" . '<loc>' . $baseUrl . '/' . $fileName . '.gz' . '</loc>' . PHP_EOL .
+                "\t" . '<lastmod>' . $lastmod . '</lastmod>' . PHP_EOL .
+                '</sitemap>'
             );
         }
-        fwrite($this->handle, '</sitemapindex>');
+        fwrite($this->handle, PHP_EOL . '</sitemapindex>');
         fclose($this->handle);
         $this->gzipFile();
     }
@@ -152,7 +152,7 @@ class Sitemap extends Component
         $this->handle = fopen($this->path, 'w');
         fwrite(
             $this->handle,
-            '<?xml version="1.0" encoding="UTF-8"?>' . "\n" .
+            '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
             ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"' .
             ' xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">'
@@ -232,16 +232,9 @@ class Sitemap extends Component
             /** @var \yii\db\ActiveQuery $dataSource */
             foreach ($dataSource->batch(100) as $entities) {
                 foreach ($entities as $entity) {
-                    if ($this->isDisallowUrl($entity->getSitemapLoc())) {
-                        continue;
+                    if (!$this->isDisallowUrl($entity->getSitemapLoc())) {
+                        $this->writeEntity($entity);
                     }
-                    if ($this->maxUrlsCountInFile > 0 && $this->urlCount === $this->maxUrlsCountInFile) {
-                        $this->closeFile();
-                        $this->gzipFile();
-                        $this->beginFile();
-                    }
-                    $this->writeEntity($entity);
-                    $this->urlCount++;
                 }
             }
         }
@@ -269,11 +262,13 @@ class Sitemap extends Component
 
     /**
      * Set maximal size of sitemap files
-     * @param $size
+     *
+     * @param int|string    $size   Maximal file size. Zero to work without limits.
+     * So you can specify the following abbreviations k - kilobytes and m - megabytes.
      */
     public function setMaxFileSize($size)
     {
-        $fileSizeAbbr = ['k', 'm', 'g', 't'];
+        $fileSizeAbbr = ['k', 'm'];
         if (!is_int($size)) {
             if (is_string($size) && preg_match('/^([\d]*)(' . implode('|', $fileSizeAbbr) . ')?$/i', $size, $matches)) {
                 $size = $matches[1];
@@ -285,6 +280,24 @@ class Sitemap extends Component
             }
         }
         $this->maxFileSize = $size;
+    }
+
+    /**
+     * Method checks limits for write in the current file.
+     *
+     * @param int   $strLen Size of writable string
+     * @return boolean
+     */
+    public function isLimitExceeded($strLen)
+    {
+        $isStrLenExceeded = function ($strLen) {
+            $fileStat = fstat($this->handle);
+            return $fileStat['size'] + $strLen > $this->maxFileSize;
+        };
+
+        return
+            ($this->maxUrlsCountInFile > 0 && $this->urlCount === $this->maxUrlsCountInFile) ||
+            ($this->maxFileSize > 0 && $isStrLenExceeded($strLen));
     }
 
     /**
@@ -323,13 +336,13 @@ class Sitemap extends Component
 
         $str .= '</url>';
 
-        $fileStat = fstat($this->handle);
-        if ($this->maxFileSize > 0 && $fileStat['size'] + strlen($str) > $this->maxFileSize) {
+        if ($this->isLimitExceeded(strlen($str))) {
             $this->closeFile();
             $this->gzipFile();
             $this->beginFile();
         }
 
         fwrite($this->handle, $str);
+        ++$this->urlCount;
     }
 }

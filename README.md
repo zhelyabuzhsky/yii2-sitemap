@@ -48,7 +48,7 @@ where
 * maxUrlsCountInFile - max count of urls in one sitemap file;
 * sitemapDirectory - directory to place sitemap files;
 * optionalAttributes - list of used optional attributes;
-* maxFileSize - maximal size of sitemap file. By default 10M.
+* maxFileSize - maximal file size. Zero to work without limits. So you can specify the following abbreviations k - kilobytes and m - megabytes. By default 10m.
 
 ### Console action
 
