@@ -40,13 +40,15 @@ $ composer require zhelyabuzhsky/yii2-sitemap
     'maxUrlsCountInFile' => 10000,
     'sitemapDirectory' => 'frontend/web',
     'optionalAttributes' => ['changefreq', 'lastmod', 'priority'],
+    'maxFileSize' => '10M',
   ],
 ```
 
 where
 * maxUrlsCountInFile - max count of urls in one sitemap file;
 * sitemapDirectory - directory to place sitemap files;
-* optionalAttributes - list of used optional attributes.
+* optionalAttributes - list of used optional attributes;
+* maxFileSize - maximal file size. Zero to work without limits. So you can specify the following abbreviations k - kilobytes and m - megabytes. By default 10m.
 
 ### Console action
 
