@@ -312,6 +312,7 @@ class Sitemap extends Component
         foreach ($this->dataSources as $dataSource) {
             /** @var \yii\db\ActiveQuery $dataSource */
             foreach ($dataSource->batch(100) as $entities) {
+                /** @var SitemapEntityInterface $entity */
                 foreach ($entities as $entity) {
                     if (!$this->isDisallowUrl($entity->getSitemapLoc())) {
                         $this->writeEntity($entity);
