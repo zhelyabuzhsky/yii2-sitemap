@@ -57,6 +57,13 @@ class Sitemap extends Component
     protected $handle;
 
     /**
+     * Size of current sitemap file.
+     *
+     * @var int
+     */
+    protected $filesize;
+
+    /**
      * Count of urls in current sitemap file.
      *
      * @var int
@@ -167,7 +174,8 @@ class Sitemap extends Component
         $this->generatedFiles[] = $fileName;
 
         $this->handle = fopen($this->path, 'w');
-        fwrite(
+        $this->filesize = 11; // "\r\n</urlset>"
+        $this->filesize += fwrite(
             $this->handle,
             '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
@@ -181,7 +189,7 @@ class Sitemap extends Component
      */
     protected function closeFile()
     {
-        fwrite($this->handle, PHP_EOL . '</urlset>');
+        $this->filesize += fwrite($this->handle, PHP_EOL . '</urlset>');
         fclose($this->handle);
     }
 
@@ -364,8 +372,7 @@ class Sitemap extends Component
     public function isLimitExceeded($strLen)
     {
         $isStrLenExceeded = function ($strLen) {
-            $fileStat = fstat($this->handle);
-            return $fileStat['size'] + $strLen > $this->maxFileSize;
+            return $this->filesize + $strLen > $this->maxFileSize;
         };
 
         return
@@ -415,7 +422,7 @@ class Sitemap extends Component
             $this->beginFile();
         }
 
-        fwrite($this->handle, $str);
+        $this->filesize += fwrite($this->handle, $str);
         ++$this->urlCount;
     }
 }
