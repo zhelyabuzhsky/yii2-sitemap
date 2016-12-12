@@ -237,7 +237,7 @@ class Sitemap extends Component
      * Set sitemap directory
      *
      * @param $directory
-     * @return $this
+     * @return Sitemap
      */
     public function sitemapDirectory($directory)
     {
@@ -252,7 +252,7 @@ class Sitemap extends Component
      * Set url manager
      *
      * @param $urlManager
-     * @return $this
+     * @return Sitemap
      */
     public function urlManager($urlManager)
     {
@@ -269,7 +269,7 @@ class Sitemap extends Component
      * Add ActiveQuery from SitemapEntity model to Sitemap model.
      *
      * @param \yii\db\ActiveQuery $dataSource
-     * @return $this
+     * @return Sitemap
      */
     public function addDataSource($dataSource)
     {
@@ -281,7 +281,7 @@ class Sitemap extends Component
      * Add SitemapEntity model to Sitemap model.
      *
      * @param SitemapEntityInterface|string $model
-     * @return $this
+     * @return Sitemap
      * @throws Exception
      */
     public function addModel($model)
@@ -325,7 +325,7 @@ class Sitemap extends Component
      * Set disallow pattern url.
      *
      * @param array $urls
-     * @return $this
+     * @return Sitemap
      */
     public function setDisallowUrls($urls)
     {
