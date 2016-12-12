@@ -2,12 +2,12 @@
 
 namespace zhelyabuzhsky\sitemap\components;
 
-use yii\base\InvalidConfigException;
-use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
 use Yii;
 use yii\base\Component;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\web\UrlManager;
+use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
 
 /**
  * Sitemap generator.
@@ -102,6 +102,9 @@ class Sitemap extends Component
      */
     protected function createIndexFile()
     {
+        if (!is_writable($this->sitemapDirectory)) {
+            throw new InvalidConfigException("Sitemap::sitemapDirectory is not writable.");
+        }
         if (empty($this->urlManager)) {
             throw new InvalidConfigException("Sitemap::urlManager is invalid.");
         }

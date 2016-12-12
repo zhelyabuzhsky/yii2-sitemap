@@ -38,8 +38,8 @@ $ composer require zhelyabuzhsky/yii2-sitemap
   [
     'class' => '\zhelyabuzhsky\sitemap\components\Sitemap',
     'maxUrlsCountInFile' => 10000,
-    'urlManager' => 'urlManagerFrontend'
     'sitemapDirectory' => '@frontend/web',
+    'urlManager' => 'urlManagerFrontend'
     'optionalAttributes' => ['changefreq', 'lastmod', 'priority'],
     'maxFileSize' => '10M',
   ],
