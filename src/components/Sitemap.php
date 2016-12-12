@@ -211,6 +211,9 @@ class Sitemap extends Component
             return $gzipFileName;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -230,14 +233,27 @@ class Sitemap extends Component
         }
     }
 
+    /**
+     * Set sitemap directory
+     *
+     * @param $directory
+     * @return $this
+     */
     public function sitemapDirectory($directory)
     {
         $directory = Yii::getAlias($directory);
         if (is_writable($directory)) {
             $this->sitemapDirectory = $directory;
         }
+        return $this;
     }
 
+    /**
+     * Set url manager
+     *
+     * @param $urlManager
+     * @return $this
+     */
     public function urlManager($urlManager)
     {
         if (is_string($urlManager)) {
@@ -246,16 +262,19 @@ class Sitemap extends Component
         if ($urlManager instanceof UrlManager) {
             $this->urlManager = $urlManager;
         }
+        return $this;
     }
 
     /**
      * Add ActiveQuery from SitemapEntity model to Sitemap model.
      *
      * @param \yii\db\ActiveQuery $dataSource
+     * @return $this
      */
     public function addDataSource($dataSource)
     {
         $this->dataSources[] = $dataSource;
+        return $this;
     }
 
     /**
