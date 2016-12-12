@@ -2,9 +2,12 @@
 
 namespace zhelyabuzhsky\sitemap\components;
 
+use yii\base\InvalidConfigException;
 use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
+use Yii;
 use yii\base\Component;
 use yii\base\Exception;
+use yii\web\UrlManager;
 
 /**
  * Sitemap generator.
@@ -23,7 +26,14 @@ class Sitemap extends Component
      *
      * @var string
      */
-    public $sitemapDirectory;
+    public $sitemapDirectory = '@app/web';
+
+    /**
+     * Url Manager
+     *
+     * @var string|UrlManager
+     */
+    public $urlManager = 'urlManager';
 
     /**
      * List of used optional attributes.
@@ -92,6 +102,10 @@ class Sitemap extends Component
      */
     protected function createIndexFile()
     {
+        if (empty($this->urlManager)) {
+            throw new InvalidConfigException("Sitemap::urlManager is invalid.");
+        }
+
         $this->path = "{$this->sitemapDirectory}/_sitemap.xml";
         $this->handle = fopen($this->path, 'w');
         fwrite(
@@ -103,8 +117,8 @@ class Sitemap extends Component
         $lastmod = $objDateTime->format(\DateTime::W3C);
 
         $baseUrl = 'http://localhost/';
-        if (isset(\Yii::$app->urlManager->baseUrl)) {
-            $baseUrl = \Yii::$app->urlManager->baseUrl;
+        if (isset($this->urlManager->baseUrl)) {
+            $baseUrl = $this->urlManager->baseUrl;
         }
         foreach ($this->generatedFiles as $fileName) {
             fwrite(
@@ -192,6 +206,43 @@ class Sitemap extends Component
             return false;
         else
             return $gzipFileName;
+    }
+
+    public function init()
+    {
+        parent::init();
+        if (!empty($this->sitemapDirector)) {
+            $this->sitemapDirectory = Yii::getAlias($this->sitemapDirectory);
+            if (!is_writable($this->sitemapDirectory)) {
+                throw new InvalidConfigException("Sitemap::sitemapDirectory is not writable.");
+            }
+        }
+        if (!empty($this->urlManager)) {
+            if (is_string($this->urlManager)) {
+                $this->urlManager = Yii::$app->get($this->urlManager);
+            }
+            if ($this->urlManager instanceof UrlManager) {
+                throw new InvalidConfigException("Sitemap::urlManager is invalid.");
+            }
+        }
+    }
+
+    public function sitemapDirectory($directory)
+    {
+        $directory = Yii::getAlias($directory);
+        if (is_writable($directory)) {
+            $this->sitemapDirectory = $directory;
+        }
+    }
+
+    public function urlManager($urlManager)
+    {
+        if (is_string($urlManager)) {
+            $urlManager = Yii::$app->get($urlManager);
+        }
+        if ($urlManager instanceof UrlManager) {
+            $this->urlManager = $urlManager;
+        }
     }
 
     /**
