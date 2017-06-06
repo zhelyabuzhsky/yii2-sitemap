@@ -22,6 +22,12 @@ class Sitemap extends Component
     public $maxUrlsCountInFile;
 
     /**
+     *
+     * @var bool
+     */
+    public $gz = true;
+
+    /**
      * Directory to place sitemap files.
      *
      * @var string
@@ -130,12 +136,13 @@ class Sitemap extends Component
         if (isset($this->urlManager->baseUrl)) {
             $baseUrl = $this->urlManager->baseUrl;
         }
+        $gz = $this->gz ? '.gz' : '';
         foreach ($this->generatedFiles as $fileName) {
             fwrite(
                 $this->handle,
                 PHP_EOL .
                 '<sitemap>' . PHP_EOL .
-                "\t" . '<loc>' . $baseUrl . '/' . $fileName . '.gz' . '</loc>' . PHP_EOL .
+                "\t" . '<loc>' . $baseUrl . '/' . $fileName . $gz . '</loc>' . PHP_EOL .
                 "\t" . '<lastmod>' . $lastmod . '</lastmod>' . PHP_EOL .
                 '</sitemap>'
             );
