@@ -2,9 +2,12 @@
 
 namespace zhelyabuzhsky\sitemap\components;
 
-use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
+use Yii;
 use yii\base\Component;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
+use yii\web\UrlManager;
+use zhelyabuzhsky\sitemap\models\SitemapEntityInterface;
 
 /**
  * Sitemap generator.
@@ -19,11 +22,24 @@ class Sitemap extends Component
     public $maxUrlsCountInFile;
 
     /**
+     *
+     * @var bool
+     */
+    public $gz = true;
+
+    /**
      * Directory to place sitemap files.
      *
      * @var string
      */
-    public $sitemapDirectory;
+    public $sitemapDirectory = '@app/web';
+
+    /**
+     * Url Manager
+     *
+     * @var string|UrlManager
+     */
+    public $urlManager = 'urlManager';
 
     /**
      * List of used optional attributes.
@@ -45,6 +61,13 @@ class Sitemap extends Component
      * @var resource
      */
     protected $handle;
+
+    /**
+     * Size of current sitemap file.
+     *
+     * @var int
+     */
+    protected $filesize;
 
     /**
      * Count of urls in current sitemap file.
@@ -92,6 +115,13 @@ class Sitemap extends Component
      */
     protected function createIndexFile()
     {
+        if (!is_writable($this->sitemapDirectory)) {
+            throw new InvalidConfigException("Sitemap::sitemapDirectory is not writable.");
+        }
+        if (empty($this->urlManager)) {
+            throw new InvalidConfigException("Sitemap::urlManager is invalid.");
+        }
+
         $this->path = "{$this->sitemapDirectory}/_sitemap.xml";
         $this->handle = fopen($this->path, 'w');
         fwrite(
@@ -103,15 +133,16 @@ class Sitemap extends Component
         $lastmod = $objDateTime->format(\DateTime::W3C);
 
         $baseUrl = 'http://localhost/';
-        if (isset(\Yii::$app->urlManager->baseUrl)) {
-            $baseUrl = \Yii::$app->urlManager->baseUrl;
+        if (isset($this->urlManager->baseUrl)) {
+            $baseUrl = $this->urlManager->baseUrl;
         }
+        $gz = $this->gz ? '.gz' : '';
         foreach ($this->generatedFiles as $fileName) {
             fwrite(
                 $this->handle,
                 PHP_EOL .
                 '<sitemap>' . PHP_EOL .
-                "\t" . '<loc>' . $baseUrl . '/' . $fileName . '.gz' . '</loc>' . PHP_EOL .
+                "\t" . '<loc>' . $baseUrl . '/' . $fileName . $gz . '</loc>' . PHP_EOL .
                 "\t" . '<lastmod>' . $lastmod . '</lastmod>' . PHP_EOL .
                 '</sitemap>'
             );
@@ -150,7 +181,8 @@ class Sitemap extends Component
         $this->generatedFiles[] = $fileName;
 
         $this->handle = fopen($this->path, 'w');
-        fwrite(
+        $this->filesize = 11; // "\r\n</urlset>"
+        $this->filesize += fwrite(
             $this->handle,
             '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
@@ -164,7 +196,7 @@ class Sitemap extends Component
      */
     protected function closeFile()
     {
-        fwrite($this->handle, PHP_EOL . '</urlset>');
+        $this->filesize += fwrite($this->handle, PHP_EOL . '</urlset>');
         fclose($this->handle);
     }
 
@@ -195,20 +227,76 @@ class Sitemap extends Component
     }
 
     /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (!empty($this->sitemapDirector)) {
+            $this->sitemapDirectory = Yii::getAlias($this->sitemapDirectory);
+            if (!is_writable($this->sitemapDirectory)) {
+                throw new InvalidConfigException("Sitemap::sitemapDirectory is not writable.");
+            }
+        }
+        if (!empty($this->urlManager)) {
+            if (is_string($this->urlManager)) {
+                $this->urlManager = Yii::$app->get($this->urlManager);
+            }
+            if ($this->urlManager instanceof UrlManager) {
+                throw new InvalidConfigException("Sitemap::urlManager is invalid.");
+            }
+        }
+    }
+
+    /**
+     * Set sitemap directory
+     *
+     * @param $directory
+     * @return Sitemap
+     */
+    public function sitemapDirectory($directory)
+    {
+        $directory = Yii::getAlias($directory);
+        if (is_writable($directory)) {
+            $this->sitemapDirectory = $directory;
+        }
+        return $this;
+    }
+
+    /**
+     * Set url manager
+     *
+     * @param $urlManager
+     * @return Sitemap
+     */
+    public function urlManager($urlManager)
+    {
+        if (is_string($urlManager)) {
+            $urlManager = Yii::$app->get($urlManager);
+        }
+        if ($urlManager instanceof UrlManager) {
+            $this->urlManager = $urlManager;
+        }
+        return $this;
+    }
+
+    /**
      * Add ActiveQuery from SitemapEntity model to Sitemap model.
      *
      * @param \yii\db\ActiveQuery $dataSource
+     * @return Sitemap
      */
     public function addDataSource($dataSource)
     {
         $this->dataSources[] = $dataSource;
+        return $this;
     }
 
     /**
      * Add SitemapEntity model to Sitemap model.
      *
      * @param SitemapEntityInterface|string $model
-     * @return $this
+     * @return Sitemap
      * @throws Exception
      */
     public function addModel($model)
@@ -231,6 +319,7 @@ class Sitemap extends Component
         foreach ($this->dataSources as $dataSource) {
             /** @var \yii\db\ActiveQuery $dataSource */
             foreach ($dataSource->batch(100) as $entities) {
+                /** @var SitemapEntityInterface $entity */
                 foreach ($entities as $entity) {
                     if (!$this->isDisallowUrl($entity->getSitemapLoc())) {
                         $this->writeEntity($entity);
@@ -252,7 +341,7 @@ class Sitemap extends Component
      * Set disallow pattern url.
      *
      * @param array $urls
-     * @return $this
+     * @return Sitemap
      */
     public function setDisallowUrls($urls)
     {
@@ -291,8 +380,7 @@ class Sitemap extends Component
     public function isLimitExceeded($strLen)
     {
         $isStrLenExceeded = function ($strLen) {
-            $fileStat = fstat($this->handle);
-            return $fileStat['size'] + $strLen > $this->maxFileSize;
+            return $this->filesize + $strLen > $this->maxFileSize;
         };
 
         return
@@ -342,7 +430,7 @@ class Sitemap extends Component
             $this->beginFile();
         }
 
-        fwrite($this->handle, $str);
+        $this->filesize += fwrite($this->handle, $str);
         ++$this->urlCount;
     }
 }

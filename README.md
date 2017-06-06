@@ -38,7 +38,8 @@ $ composer require zhelyabuzhsky/yii2-sitemap
   [
     'class' => '\zhelyabuzhsky\sitemap\components\Sitemap',
     'maxUrlsCountInFile' => 10000,
-    'sitemapDirectory' => 'frontend/web',
+    'sitemapDirectory' => '@frontend/web',
+    'urlManager' => 'urlManagerFrontend'
     'optionalAttributes' => ['changefreq', 'lastmod', 'priority'],
     'maxFileSize' => '10M',
   ],
@@ -56,6 +57,24 @@ where
 public function actionCreateSitemap()
 {
   \Yii::$app->sitemap
+    ->addModel(Item::className())
+    ->addModel(Category::className())
+    ->setDisallowUrls([
+      '#url1#',
+      '#url2$#',
+    ])
+    ->create();
+}
+```
+
+or 
+
+```php
+public function actionCreateSitemap()
+{
+  \Yii::$app->sitemap
+    ->sitemapDirectory('@frontend/web')
+    ->urlManager('urlManagerFrontend')
     ->addModel(Item::className())
     ->addModel(Category::className())
     ->setDisallowUrls([
