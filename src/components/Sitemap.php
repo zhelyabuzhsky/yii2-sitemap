@@ -54,9 +54,9 @@ class Sitemap extends Component
     protected $urlCount = 0;
 
     /**
-     * Array of data sources for sitemap generation.
+     * Array of data sources and connections for sitemap generation.
      *
-     * @var \yii\db\ActiveQuery[]
+     * @var mixed[]
      */
     protected $dataSources = [];
 
@@ -196,27 +196,34 @@ class Sitemap extends Component
 
     /**
      * Add ActiveQuery from SitemapEntity model to Sitemap model.
+     * @param Connection|null   $db     The DB connection to be used when performing batch query.
+     *                                  If null, the "db" application component will be used.
      *
      * @param \yii\db\ActiveQuery $dataSource
      */
-    public function addDataSource($dataSource)
+    public function addDataSource($dataSource, $db = null)
     {
-        $this->dataSources[] = $dataSource;
+        $this->dataSources[] = [
+            'query' => $dataSource,
+            'connection' => $db
+        ];
     }
 
     /**
      * Add SitemapEntity model to Sitemap model.
      *
      * @param SitemapEntityInterface|string $model
+     * @param Connection|null   $db     The DB connection to be used when performing batch query.
+     *                                  If null, the "db" application component will be used.
      * @return $this
      * @throws Exception
      */
-    public function addModel($model)
+    public function addModel($model, $db = null)
     {
         if (!((new $model()) instanceof SitemapEntityInterface)) {
             throw new Exception("Model $model does not implement interface SitemapEntity");
         }
-        $this->addDataSource($model::getSitemapDataSource());
+        $this->addDataSource($model::getSitemapDataSource(), $db);
         return $this;
     }
 
@@ -229,8 +236,11 @@ class Sitemap extends Component
         $this->beginFile();
 
         foreach ($this->dataSources as $dataSource) {
-            /** @var \yii\db\ActiveQuery $dataSource */
-            foreach ($dataSource->batch(100) as $entities) {
+            /** @var ActiveQuery $query */
+            $query = $dataSource['query'];
+            /** @var Connection  $connection */
+            $connection = $dataSource['connection'];
+            foreach ($query->batch(100, $connection) as $entities) {
                 foreach ($entities as $entity) {
                     if (!$this->isDisallowUrl($entity->getSitemapLoc())) {
                         $this->writeEntity($entity);
