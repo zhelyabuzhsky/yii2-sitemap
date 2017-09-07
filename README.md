@@ -52,14 +52,12 @@ where
 
 ### Console action
 
-So in the addModel method, you can pass the second connection to the database connection that you need to use.
-
 ```php
 public function actionCreateSitemap()
 {
   \Yii::$app->sitemap
     ->addModel(Item::className())
-    ->addModel(Category::className(), \Yii::$app->db)
+    ->addModel(Category::className(), \Yii::$app->db) // Also you can pass \yii\db\Connection to the database connection that you need to use
     ->setDisallowUrls([
       '#url1#',
       '#url2$#',
