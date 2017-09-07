@@ -56,7 +56,7 @@ class Sitemap extends Component
     /**
      * Array of data sources and connections for sitemap generation.
      *
-     * @var mixed[]
+     * @var array[] an array of [\yii\db\ActiveQuery, \yii\db\Connection]
      */
     protected $dataSources = [];
 
