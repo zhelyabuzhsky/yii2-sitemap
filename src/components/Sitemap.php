@@ -103,15 +103,16 @@ class Sitemap extends Component
         $lastmod = $objDateTime->format(\DateTime::W3C);
 
         $baseUrl = 'http://localhost/';
-        if (isset(\Yii::$app->urlManager->baseUrl)) {
-            $baseUrl = \Yii::$app->urlManager->baseUrl;
-        }
+        
+        $baseUrl = \Yii::$app->urlManager->baseUrl;
+        $hostInfo = \Yii::$app->urlManager->hostInfo;   
+        
         foreach ($this->generatedFiles as $fileName) {
             fwrite(
                 $this->handle,
                 PHP_EOL .
                 '<sitemap>' . PHP_EOL .
-                "\t" . '<loc>' . $baseUrl . '/' . $fileName . '.gz' . '</loc>' . PHP_EOL .
+                "\t" . '<loc>' . $hostInfo . $baseUrl . '/' . $fileName . '.gz' . '</loc>' . PHP_EOL .
                 "\t" . '<lastmod>' . $lastmod . '</lastmod>' . PHP_EOL .
                 '</sitemap>'
             );
