@@ -17,4 +17,7 @@
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+    <php>    
+        <server name="SERVER_NAME" value="http://localhost" />        
+    </php>
 </phpunit>
