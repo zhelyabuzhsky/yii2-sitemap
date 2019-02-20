@@ -102,7 +102,6 @@ class Sitemap extends Component
         $objDateTime = new \DateTime('NOW');
         $lastmod = $objDateTime->format(\DateTime::W3C);
 
-        
         $baseUrl = \Yii::$app->urlManager->baseUrl;
         $hostInfo = \Yii::$app->urlManager->hostInfo;   
         
