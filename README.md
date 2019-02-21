@@ -22,7 +22,7 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 
 ## Usage
 
-Set enviroment variable SERVER_NAME (e.g. 'http://example.com')
+Set enviroment variable SERVER_NAME (e.g. https://example.com)
 
 ### Basic initialization
 
