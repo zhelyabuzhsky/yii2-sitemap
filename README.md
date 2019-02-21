@@ -22,6 +22,8 @@ $ composer require zhelyabuzhsky/yii2-sitemap
 
 ## Usage
 
+Set enviroment variable SERVER_NAME (e.g. 'http://example.com')
+
 ### Basic initialization
 
 ```php
